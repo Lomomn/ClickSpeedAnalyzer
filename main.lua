@@ -11,7 +11,7 @@ local bestCps = 0
 
 function love.load()
 	love.graphics.setDefaultFilter('nearest', 'nearest')
-	love.window.setMode(1000, 1000)
+	love.window.setMode(1000, 1000, {resizable = true, vsync = false})
 	love.window.setTitle("Click Speed Analyser")
 end
 
@@ -52,26 +52,26 @@ end
 function love.mousepressed(x,y,button)
 	local down = love.timer.getTime()
 	if canRunTest then
-		if testStart==nil and button==1 then
+		if testStart==nil then
 			testStart = down 
 			clickTable = {}
 			formatted = ""
 		end
 		
-		if button==1 then
+		
 			-- Start a new click entry
 			table.insert(clickTable, {
 				down			= down - testStart,
 				up				= nil,
 				spacing		= 0
 			})
-		end
+		
 	end
 end
 
 
 function love.mousereleased(x,y,button)
-	if testStart and button==1 then
+	if testStart then
 		local up = love.timer.getTime()
 	
 		if #clickTable>1 then
@@ -98,6 +98,8 @@ function love.draw()
 	local cps = #clickTable/testDuration
 	if cps > bestCps then bestCps = cps end
 	love.graphics.printf("CPS: "..cps..", Best: "..bestCps, 0, 40, width/1.5, 'center', 0, 1.5, 1.5)
+
+	love.graphics.printf(tostring(love.timer.getFPS()), 0, 10, width/1.5, 'right', 0, 1.5, 1.5)
 	
 	love.graphics.printf(formatted, 10, 110, width)
 	
